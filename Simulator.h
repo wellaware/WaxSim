@@ -16,6 +16,7 @@
     DTiPhoneSimulatorSystemRoot *_sdk;
 	NSNumber *_family;
     DTiPhoneSimulatorSession* _session;
+	NSDictionary *_env;
 	NSArray *_args;
 }
 
@@ -23,7 +24,7 @@
 
 + (NSArray *)availableSDKs;
 
-- (id)initWithAppPath:(NSString *)appPath sdk:(NSString *)sdk family:(NSString *)family args:(NSArray *)args;
+- (id)initWithAppPath:(NSString *)appPath sdk:(NSString *)sdk family:(NSString *)family env:(NSDictionary *)env args:(NSArray *)args;
 - (int)launch;
 - (void)end;
 

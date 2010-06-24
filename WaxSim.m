@@ -6,7 +6,7 @@
 static BOOL gReset = false;
 
 void printUsage();
-void simulate(NSString *sdk, NSString *family, NSString *appPath, NSMutableArray *additionalArgs);
+void simulate(NSString *sdk, NSString *family, NSString *appPath, NSDictionary *environment, NSArray *additionalArgs);
 void resetSignal(int sig);
 
 int main(int argc, char *argv[]) {
@@ -17,9 +17,17 @@ int main(int argc, char *argv[]) {
 	char *family = nil;
     char *appPath = nil;
 	NSMutableArray *additionalArgs = [NSMutableArray array];
+	NSMutableDictionary *environment = [NSMutableDictionary dictionary];
+	NSString *environment_variable;
+	NSArray *environment_variable_parts;
     
-    while ((c = getopt(argc, argv, "s:ah")) != -1) {
+    while ((c = getopt(argc, argv, "e:s:f:ah")) != -1) {
         switch(c) {
+			case 'e':
+				environment_variable = [NSString stringWithCString:optarg encoding:NSUTF8StringEncoding];
+				environment_variable_parts = [environment_variable componentsSeparatedByString:@"="];
+
+				[environment setObject:[environment_variable_parts objectAtIndex:1] forKey:[environment_variable_parts objectAtIndex:0]];
             case 's':
                 sdk = optarg;
                 break;
@@ -74,15 +82,15 @@ int main(int argc, char *argv[]) {
     while (true) {
         gReset = false;
 
-        simulate(sdkString, familyString, appPathString, additionalArgs);
+        simulate(sdkString, familyString, appPathString, environment, additionalArgs);
         printf("\n\nREBOOT\n", appPath);
     }
             
     return 0;
 }
 
-void simulate(NSString *sdk, NSString *family, NSString *appPath, NSMutableArray *additionalArgs) {
-    Simulator *simulator = [[Simulator alloc] initWithAppPath:appPath sdk:sdk family:family args:additionalArgs];
+void simulate(NSString *sdk, NSString *family, NSString *appPath, NSDictionary *environment, NSArray *additionalArgs) {
+    Simulator *simulator = [[Simulator alloc] initWithAppPath:appPath sdk:sdk family:family env:environment args:additionalArgs];
     [simulator launch];
     
     while (!gReset && [[NSRunLoop mainRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:-1]]) ;
@@ -95,6 +103,8 @@ void printUsage() {
     fprintf(stderr, "example: waxsim -s 2.2 /path/to/app.app\n");
     fprintf(stderr, "Available options are:\n");    
     fprintf(stderr, "\t-s sdk\tVersion number of sdk to use (-s 3.1)\n");        
+    fprintf(stderr, "\t-f family\tDevice to use (-f ipad)\n");
+    fprintf(stderr, "\t-e VAR=value\tEnvironment variable to set (-e CFFIXED_HOME=/tmp/iphonehome)\n");
     fprintf(stderr, "\t-a \tAvailable SDK's\n");
     fprintf(stderr, "\t-h \tPrints out this wonderful documentation!\n");    
 }

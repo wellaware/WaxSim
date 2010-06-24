@@ -18,7 +18,7 @@
 
 @synthesize session=_session;
 
-- (id)initWithAppPath:(NSString *)appPath sdk:(NSString *)sdk family:(NSString *)family args:(NSArray *)args {
+- (id)initWithAppPath:(NSString *)appPath sdk:(NSString *)sdk family:(NSString *)family env:(NSDictionary *)env args:(NSArray *)args {
     self = [super init];
 
     NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -54,6 +54,7 @@
 		_family = [NSNumber numberWithInt: 1];
 	}
 	
+	_env = [env retain];
 	_args = [args retain];
 
     return self;
@@ -85,7 +86,7 @@
 	[config setSimulatedDeviceFamily:_family];
     [config setSimulatedApplicationShouldWaitForDebugger:NO];    
     [config setSimulatedApplicationLaunchArgs:_args];
-    [config setSimulatedApplicationLaunchEnvironment:[[NSProcessInfo processInfo] environment]];
+    [config setSimulatedApplicationLaunchEnvironment:_env];
     [config setLocalizedClientName:@"iCuke"];
 
     // Make the simulator output to the current STDOUT & STDERR
