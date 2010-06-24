@@ -80,13 +80,8 @@ int main(int argc, char *argv[]) {
 	NSString *familyString = family ? [NSString stringWithUTF8String:family] : nil;
     NSString *appPathString = [NSString stringWithUTF8String:appPath];
 
-    while (true) {
-        gReset = false;
+	simulate(sdkString, familyString, appPathString, environment, additionalArgs);
 
-        simulate(sdkString, familyString, appPathString, environment, additionalArgs);
-        printf("\n\nREBOOT\n", appPath);
-    }
-            
     return 0;
 }
 
@@ -112,5 +107,4 @@ void printUsage() {
 
 void resetSignal(int sig) {
     gReset = true;
-    signal(sig, resetSignal);
 }
