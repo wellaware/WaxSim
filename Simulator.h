@@ -13,7 +13,8 @@
 
 @interface Simulator : NSObject <DTiPhoneSimulatorSessionDelegate> {
     NSString *_appPath;
-    DTiPhoneSimulatorSystemRoot *_sdk;  
+    DTiPhoneSimulatorSystemRoot *_sdk;
+	NSNumber *_family;
     DTiPhoneSimulatorSession* _session;
 	NSArray *_args;
 }
@@ -22,7 +23,7 @@
 
 + (NSArray *)availableSDKs;
 
-- (id)initWithAppPath:(NSString *)appPath sdk:(NSString *)sdk args:(NSArray *)args;
+- (id)initWithAppPath:(NSString *)appPath sdk:(NSString *)sdk family:(NSString *)family args:(NSArray *)args;
 - (int)launch;
 - (void)end;
 

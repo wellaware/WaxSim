@@ -6,7 +6,7 @@
 static BOOL gReset = false;
 
 void printUsage();
-void simulate(NSString *sdk, NSString *appPath, NSMutableArray *additionalArgs);
+void simulate(NSString *sdk, NSString *family, NSString *appPath, NSMutableArray *additionalArgs);
 void resetSignal(int sig);
 
 int main(int argc, char *argv[]) {
@@ -14,8 +14,8 @@ int main(int argc, char *argv[]) {
     
     int c;
     char *sdk = nil;
+	char *family = nil;
     char *appPath = nil;
-    char *buildPath = nil;
 	NSMutableArray *additionalArgs = [NSMutableArray array];
     
     while ((c = getopt(argc, argv, "s:ah")) != -1) {
@@ -23,6 +23,9 @@ int main(int argc, char *argv[]) {
             case 's':
                 sdk = optarg;
                 break;
+			case 'f':
+				family = optarg;
+				break;
             case 'a':
                 fprintf(stdout, "Available SDK Versions.\n", optopt);
                 for (NSString *sdkVersion in [Simulator availableSDKs]) {
@@ -33,7 +36,7 @@ int main(int argc, char *argv[]) {
                 printUsage();
                 return 1;                 
             case '?':
-                if (optopt == 's') {
+                if (optopt == 's' || optopt == 'f') {
                     fprintf(stderr, "Option -%c requires an argument.\n", optopt);
                     printUsage();
                 }
@@ -52,10 +55,6 @@ int main(int argc, char *argv[]) {
     if (argc > optind) {
         appPath = argv[optind++];
 
-        if (argc > optind) {
-            buildPath = argv[optind++];
-        }
-		
 		// Additional args are sent to app
 		for (int i = optind; i < argc; i++) {
 			[additionalArgs addObject:[NSString stringWithUTF8String:argv[i]]];
@@ -69,35 +68,21 @@ int main(int argc, char *argv[]) {
     
     
     NSString *sdkString = sdk ? [NSString stringWithUTF8String:sdk] : nil;
+	NSString *familyString = family ? [NSString stringWithUTF8String:family] : nil;
     NSString *appPathString = [NSString stringWithUTF8String:appPath];
-    NSString *buildPathString = buildPath ? [NSString stringWithUTF8String:buildPath] : nil;
 
     while (true) {
         gReset = false;
 
-        // Move scripts over!
-        if (buildPathString) {
-            NSFileManager *fm = [NSFileManager defaultManager];
-            NSString *appDataPath = [appPathString stringByAppendingPathComponent:@"data"];
-            NSString *buildDataPath = [buildPathString stringByAppendingPathComponent:@"data"];
-            NSError *error = nil;
-            [fm removeItemAtPath:appDataPath error:&error];
-            [fm copyItemAtPath:buildDataPath toPath:appDataPath error:&error];            
-            [fm copyItemAtPath:[buildPathString stringByAppendingPathComponent:@"wax/lib/wax-scripts"]
-                        toPath:[appDataPath stringByAppendingPathComponent:@"scripts/wax"]
-                         error:&error];
-            
-        }
-        
-        simulate(sdkString, appPathString, additionalArgs);
+        simulate(sdkString, familyString, appPathString, additionalArgs);
         printf("\n\nREBOOT\n", appPath);
     }
             
     return 0;
 }
 
-void simulate(NSString *sdk, NSString *appPath, NSMutableArray *additionalArgs) {
-    Simulator *simulator = [[Simulator alloc] initWithAppPath:appPath sdk:sdk args:additionalArgs];
+void simulate(NSString *sdk, NSString *family, NSString *appPath, NSMutableArray *additionalArgs) {
+    Simulator *simulator = [[Simulator alloc] initWithAppPath:appPath sdk:sdk family:family args:additionalArgs];
     [simulator launch];
     
     while (!gReset && [[NSRunLoop mainRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:-1]]) ;

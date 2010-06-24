@@ -18,7 +18,7 @@
 
 @synthesize session=_session;
 
-- (id)initWithAppPath:(NSString *)appPath sdk:(NSString *)sdk args:(NSArray *)args {
+- (id)initWithAppPath:(NSString *)appPath sdk:(NSString *)sdk family:(NSString *)family args:(NSArray *)args {
     self = [super init];
 
     NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -48,6 +48,12 @@
         exit(EXIT_FAILURE);
     }
 	
+	if ([family isEqualToString: @"ipad"]) {
+		_family = [NSNumber numberWithInt: 2];
+	} else {
+		_family = [NSNumber numberWithInt: 1];
+	}
+	
 	_args = [args retain];
 
     return self;
@@ -76,10 +82,11 @@
     DTiPhoneSimulatorSessionConfig *config = [[DTiPhoneSimulatorSessionConfig alloc] init];
     [config setApplicationToSimulateOnStart:appSpec];
     [config setSimulatedSystemRoot:sdkRoot];
+	[config setSimulatedDeviceFamily:_family];
     [config setSimulatedApplicationShouldWaitForDebugger:NO];    
     [config setSimulatedApplicationLaunchArgs:_args];
     [config setSimulatedApplicationLaunchEnvironment:[[NSProcessInfo processInfo] environment]];
-    [config setLocalizedClientName:@"WaxSim"];
+    [config setLocalizedClientName:@"iCuke"];
 
     // Make the simulator output to the current STDOUT & STDERR
     char path[MAXPATHLEN];
