@@ -28,6 +28,7 @@ int main(int argc, char *argv[]) {
 				environment_variable_parts = [environment_variable componentsSeparatedByString:@"="];
 
 				[environment setObject:[environment_variable_parts objectAtIndex:1] forKey:[environment_variable_parts objectAtIndex:0]];
+				break;
             case 's':
                 sdk = optarg;
                 break;
