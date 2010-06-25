@@ -12,7 +12,7 @@
 #include <objc/runtime.h>
 
 #define WaxLog(format, args...) \
-    printf("%s\n", [[NSString stringWithFormat:(format), ## args] UTF8String])
+    fprintf(stderr, "%s\n", [[NSString stringWithFormat:(format), ## args] UTF8String])
 
 @implementation Simulator
 
@@ -89,12 +89,12 @@
     [config setSimulatedApplicationLaunchEnvironment:_env];
     [config setLocalizedClientName:@"iCuke"];
 
-    // Make the simulator output to the current STDOUT & STDERR
+    // Make the simulator output to the current STDERR
+	// We mix them together to avoid buffering issues on STDOUT
     char path[MAXPATHLEN];
-    fcntl(STDOUT_FILENO, F_GETPATH, &path);
-    [config setSimulatedApplicationStdOutPath:[NSString stringWithUTF8String:path]];
-    
+
     fcntl(STDERR_FILENO, F_GETPATH, &path);
+    [config setSimulatedApplicationStdOutPath:[NSString stringWithUTF8String:path]];
     [config setSimulatedApplicationStdErrPath:[NSString stringWithUTF8String:path]];
     
     _session = [[DTiPhoneSimulatorSession alloc] init];
