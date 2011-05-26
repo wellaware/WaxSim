@@ -124,8 +124,12 @@
 }
 
 - (void)session:(DTiPhoneSimulatorSession *)session didEndWithError:(NSError *)error {
-    WaxLog(@"Session ended with error. %@", [error localizedDescription]);
-    if ([error code] != 2) exit(EXIT_FAILURE); // if it is a timeout error, that's cool. We are probably rebooting
+    if (error) {
+        WaxLog(@"Session ended with error. %@", [error localizedDescription]);
+        if ([error code] != 2) exit(EXIT_FAILURE); // if it is a timeout error, that's cool. We are probably rebooting
+    } else {
+        exit(EXIT_SUCCESS);
+    }
 }
 
 @end
