@@ -89,7 +89,10 @@ void simulate(NSString *sdk, NSString *family, NSString *appPath, NSDictionary *
     Simulator *simulator = [[Simulator alloc] initWithAppPath:appPath sdk:sdk family:family env:environment args:additionalArgs];
     [simulator launch];
     
-    while (!gReset && [[NSRunLoop mainRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:-1]]) ;
+    while (!gReset && [[NSRunLoop mainRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:-1]])
+    {
+        usleep(100);
+    }
     
     [simulator end];
 }
