@@ -12,6 +12,7 @@
 		048275C011263A74003DFACB /* iPhoneSimulatorRemoteClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 048275BF11263A74003DFACB /* iPhoneSimulatorRemoteClient.framework */; };
 		8DD76F9A0486AA7600D96B5E /* WaxSim.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* WaxSim.m */; settings = {ATTRIBUTES = (); }; };
 		8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB779EFE84155DC02AAC07 /* Foundation.framework */; };
+		A8BC32E4139825EB00BDDB2A /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8BC32E3139825EA00BDDB2A /* QTKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -36,6 +37,7 @@
 		08FB779EFE84155DC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32A70AAB03705E1F00C91783 /* WaxSim_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaxSim_Prefix.pch; sourceTree = "<group>"; };
 		8DD76FA10486AA7600D96B5E /* waxsim */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = waxsim; sourceTree = BUILT_PRODUCTS_DIR; };
+		A8BC32E3139825EA00BDDB2A /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = System/Library/Frameworks/QTKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A8BC32E4139825EB00BDDB2A /* QTKit.framework in Frameworks */,
 				8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */,
 				048274F11126398C003DFACB /* AppKit.framework in Frameworks */,
 				048275C011263A74003DFACB /* iPhoneSimulatorRemoteClient.framework in Frameworks */,
@@ -55,6 +58,7 @@
 		08FB7794FE84155DC02AAC07 /* WaxSim */ = {
 			isa = PBXGroup;
 			children = (
+				A8BC32E3139825EA00BDDB2A /* QTKit.framework */,
 				08FB7795FE84155DC02AAC07 /* Source */,
 				08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
@@ -120,7 +124,11 @@
 			isa = PBXProject;
 			buildConfigurationList = 1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "WaxSim" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 08FB7794FE84155DC02AAC07 /* WaxSim */;
 			projectDirPath = "";
 			projectRoot = "";

@@ -7,6 +7,7 @@
 //
 
 #import "Simulator.h"
+#import <QTKit/QTKit.h>
 
 #include <sys/param.h>
 #include <objc/runtime.h>
@@ -18,7 +19,8 @@
 
 @synthesize session=_session;
 
-- (id)initWithAppPath:(NSString *)appPath sdk:(NSString *)sdk family:(NSString *)family env:(NSDictionary *)env args:(NSArray *)args {
+- (id)initWithAppPath:(NSString *)appPath sdk:(NSString *)sdk family:(NSString *)family video:(NSString *)videoPath env:(NSDictionary *)env args:(NSArray *)args;
+{
     self = [super init];
 
     NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -56,6 +58,7 @@
 	
 	_env = [env retain];
 	_args = [args retain];
+    _videoPath = [videoPath retain];
 
     return self;
 }
@@ -87,7 +90,7 @@
     [config setSimulatedApplicationShouldWaitForDebugger:NO];    
     [config setSimulatedApplicationLaunchArgs:_args];
     [config setSimulatedApplicationLaunchEnvironment:_env];
-    [config setLocalizedClientName:@"iCuke"];
+    [config setLocalizedClientName:@"WaxSim"];
 
     // Make the simulator output to the current STDERR
 	// We mix them together to avoid buffering issues on STDOUT
@@ -99,7 +102,6 @@
     
     _session = [[DTiPhoneSimulatorSession alloc] init];
     [_session setDelegate:self];
-    [_session setSimulatedApplicationPID:[NSNumber numberWithInt:35]];
     
     NSError *error;
     if (![_session requestStartWithConfig:config timeout:30 error:&error]) {
@@ -114,6 +116,27 @@
     [_session requestEndWithTimeout:0];
 }
 
+- (void)addScreenshotToMovie;
+{
+    if (!_windowID || !_movie) {
+        return;
+    }
+    
+    NSTimeInterval interval = [NSDate timeIntervalSinceReferenceDate];
+    QTTime duration = QTMakeTimeWithTimeInterval(interval - _lastInterval);
+    _lastInterval = interval;
+    
+    CGImageRef imageRef = CGWindowListCreateImage(CGRectNull, kCGWindowListOptionIncludingWindow, _windowID, kCGWindowImageDefault);
+    NSImage *image = [[NSImage alloc] initWithCGImage:imageRef size:NSZeroSize];
+    
+    if ([image size].width > 5.0f) {
+        NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:@"mp4v", QTAddImageCodecType, [NSNumber numberWithLong:codecLowQuality], QTAddImageCodecQuality, nil];
+        [_movie addImage:image forDuration:duration withAttributes:attributes];
+    }
+    [image release];
+    CGImageRelease(imageRef);
+}
+
 // DTiPhoneSimulatorSession Delegate
 // ---------------------------------
 - (void)session:(DTiPhoneSimulatorSession *)session didStart:(BOOL)started withError:(NSError *)error {
@@ -121,9 +144,36 @@
         WaxLog(@"Session failed to start. %@", [error localizedDescription]);
         exit(EXIT_FAILURE);
     }
+    
+    if (!_videoPath) {
+        return;
+    }
+    
+    WaxLog(@"Getting window list");
+    NSArray *windowList = (NSArray *)CGWindowListCopyWindowInfo(kCGWindowListOptionOnScreenOnly, kCGNullWindowID);
+    for (NSDictionary *info in windowList) {
+        if ([[info objectForKey:(NSString *)kCGWindowOwnerName] isEqualToString:@"iOS Simulator"] && ![[info objectForKey:(NSString *)kCGWindowName] isEqualToString:@""]) {
+            _windowID = [[info objectForKey:(NSString *)kCGWindowNumber] unsignedIntValue];
+        }
+    }
+    [windowList release];
+    if (_windowID) {
+        _movie = [[QTMovie alloc] initToWritableFile:[NSString stringWithCString:tmpnam(nil) encoding:[NSString defaultCStringEncoding]] error:NULL];
+        _lastInterval = [NSDate timeIntervalSinceReferenceDate];;
+        [NSTimer scheduledTimerWithTimeInterval:1.0/30.0 target:self selector:@selector(addScreenshotToMovie) userInfo:nil repeats:YES];
+    }
 }
 
 - (void)session:(DTiPhoneSimulatorSession *)session didEndWithError:(NSError *)error {
+    if (_movie) {
+        NSDictionary *attributes = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:QTMovieFlatten];
+        NSError *error = nil;
+        BOOL success = [_movie writeToFile:_videoPath withAttributes:attributes error:&error];
+        if (!success) {
+            WaxLog(@"Failed to write movie: %@", error);
+        }
+        [_movie release];
+    }
     if (error) {
         WaxLog(@"Session ended with error. %@", [error localizedDescription]);
         if ([error code] != 2) exit(EXIT_FAILURE); // if it is a timeout error, that's cool. We are probably rebooting
