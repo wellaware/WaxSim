@@ -168,8 +168,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = WaxSim_Prefix.pch;
 				INSTALL_PATH = /usr/local/bin;
-				LD_RUNPATH_SEARCH_PATHS = /Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks;
+				LD_RUNPATH_SEARCH_PATHS = "/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks /Applications/XCode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks /Applications/Xcode.app/Contents/OtherFrameworks";
 				PRODUCT_NAME = waxsim;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -187,8 +188,9 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = WaxSim_Prefix.pch;
 				INSTALL_PATH = /usr/local/bin;
-				LD_RUNPATH_SEARCH_PATHS = /Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks;
+				LD_RUNPATH_SEARCH_PATHS = "/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks /Applications/XCode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks /Applications/Xcode.app/Contents/OtherFrameworks";
 				PRODUCT_NAME = waxsim;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -202,7 +204,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -215,7 +217,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
